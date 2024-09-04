@@ -13,6 +13,7 @@ function initDB() {
 
     request.onsuccess = function(event) {
         db = event.target.result;
+        loadRecords(); // Carregar registros ao inicializar o DB
     };
 
     request.onerror = function(event) {
@@ -59,7 +60,7 @@ function registerAthlete() {
         const tableBody = document.querySelector('#logTable tbody');
         const newRow = document.createElement('tr');
         newRow.innerHTML = `<td>${athleteID}</td><td>${athlete.name}</td><td>${athlete.category}</td><td>${currentTime}</td>`;
-        tableBody.appendChild(newRow);
+        tableBody.insertBefore(newRow, tableBody.firstChild); // Adiciona na parte superior
         clearDisplay();
     };
 
@@ -77,4 +78,33 @@ function clearDisplay() {
     document.getElementById('display').value = '';
 }
 
-initDB();
+function loadRecords() {
+    const transaction = db.transaction(['athletes']);
+    const objectStore = transaction.objectStore('athletes');
+    const request = objectStore.getAll();
+
+    request.onsuccess = function(event) {
+        const athletes = event.target.result;
+        const tableBody = document.querySelector('#logTable tbody');
+        tableBody.innerHTML = ''; // Limpar tabela antes de adicionar novos dados
+
+        // Ordenar atletas por horário de chegada
+        athletes.sort((a, b) => new Date(b.arrivalTime) - new Date(a.arrivalTime));
+        athletes.forEach(athlete => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${athlete.id}</td>
+                <td>${athlete.name}</td>
+                <td>${athlete.category}</td>
+                <td>${athlete.arrivalTime || 'N/A'}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    };
+
+    request.onerror = function(event) {
+        console.error('Erro ao carregar registros:', event.target.errorCode);
+    };
+}
+
+document.addEventListener('DOMContentLoaded', initDB);
