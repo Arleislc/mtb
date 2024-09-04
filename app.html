@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Atletas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" placeholder="Digite o número do atleta" readonly>
+        <div class="buttons">
+            <button class="btn" onclick="appendNumber(1)">1</button>
+            <button class="btn" onclick="appendNumber(2)">2</button>
+            <button class="btn" onclick="appendNumber(3)">3</button>
+            <button class="btn" onclick="appendNumber(4)">4</button>
+            <button class="btn" onclick="appendNumber(5)">5</button>
+            <button class="btn" onclick="appendNumber(6)">6</button>
+            <button class="btn" onclick="appendNumber(7)">7</button>
+            <button class="btn" onclick="appendNumber(8)">8</button>
+            <button class="btn" onclick="appendNumber(9)">9</button>
+            <button class="btn zero" onclick="appendNumber(0)">0</button>
+        </div>
+        <div class="action-buttons">
+            <button class="btn clear" onclick="clearDisplay()">Limpar</button>
+            <button class="btn register" onclick="registerAthlete()">Registrar</button>
+        </div>
+    </div>
+    <div class="log">
+        <h3>Registros</h3>
+        <table id="logTable">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Horário</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Registros aparecerão aqui -->
+            </tbody>
+        </table>
+    </div>
+    <input type="file" id="csvFileInput" accept=".csv" onchange="loadCSV(event)" />
+    <script src="script.js"></script>
+</body>
+</html>
