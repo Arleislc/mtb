@@ -67,21 +67,32 @@ function loadCSV(event) {
 
     reader.onload = function() {
         const lines = reader.result.split('\n');
-        lines.forEach(line => {
-            const [id, name, category] = line.split(';').map(item => item.trim());
-            if (id && name && category) {
-                athletes[id] = {
-                    name: name,
-                    category: category
-                };
-            }
-        });
-
-        // Imprime a lista completa de atletas no console após o processamento do arquivo CSV
-        console.log('Lista completa de atletas carregados:', athletes);
-
-        alert('Arquivo CSV carregado com sucesso!');
+        processCSVLines(lines);
     };
 
     reader.readAsText(input.files[0]);
+}
+
+function loadCSVFromText() {
+    const csvText = document.getElementById('csvText').value;
+    const lines = csvText.split('\n');
+    processCSVLines(lines);
+}
+
+function processCSVLines(lines) {
+    athletes = {}; // Limpa os atletas anteriores
+    lines.forEach(line => {
+        const [id, name, category] = line.split(',').map(item => item.trim());
+        if (id && name && category) {
+            athletes[id] = {
+                name: name,
+                category: category
+            };
+        }
+    });
+
+    // Imprime a lista completa de atletas no console após o processamento do arquivo CSV
+    console.log('Lista completa de atletas carregados:', athletes);
+
+    alert('Atletas carregados com sucesso!');
 }
