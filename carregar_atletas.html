@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregar Atletas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Registro</a></li>
+            <li><a href="carregar_atletas.html">Carregar Atletas</a></li>
+            <li><a href="ordem_de_chegada.html">Resultados</a></li>
+        </ul>
+    </nav>
+    <div class="csv-input">
+        <h3>Importar Atletas</h3>
+        <input type="file" id="csvFile" accept=".csv" onchange="loadCSV(event)">
+        <textarea id="csvText" placeholder="Cole o conteúdo CSV aqui..." rows="10" cols="50"></textarea>
+        <button onclick="loadCSVFromText()">Carregar CSV do Texto</button>
+    </div>
+    <h3>Atletas Carregados</h3>
+    <table id="athletesTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Atletas carregados serão adicionados aqui -->
+        </tbody>
+    </table>
+    <div id="editForm" style="display: none;">
+        <h3>Editar Atleta</h3>
+        <input type="hidden" id="editID">
+        <label for="editName">Nome:</label>
+        <input type="text" id="editName">
+        <label for="editCategory">Categoria:</label>
+        <input type="text" id="editCategory">
+        <button onclick="updateAthlete()">Atualizar</button>
+        <button onclick="cancelEdit()">Cancelar</button>
+    </div>
+    <script src="carregar_atletas.js"></script>
+</body>
+</html>

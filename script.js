@@ -1,5 +1,72 @@
-let athletes = {};
-let arrivals = []; // Lista de chegadas
+let db;
+
+// Inicializa IndexedDB
+function initDB() {
+    const request = indexedDB.open('athletesDB', 1);
+
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        const objectStore = db.createObjectStore('athletes', { keyPath: 'id' });
+        objectStore.createIndex('name', 'name', { unique: false });
+        objectStore.createIndex('category', 'category', { unique: false });
+    };
+
+    request.onsuccess = function(event) {
+        db = event.target.result;
+    };
+
+    request.onerror = function(event) {
+        console.error('Erro ao abrir IndexedDB:', event.target.errorCode);
+    };
+}
+
+// Adiciona ou atualiza um atleta no banco de dados
+function saveAthlete(id, name, category) {
+    const transaction = db.transaction(['athletes'], 'readwrite');
+    const objectStore = transaction.objectStore('athletes');
+    const request = objectStore.put({ id, name, category });
+
+    request.onsuccess = function() {
+        console.log('Atleta salvo com sucesso.');
+    };
+
+    request.onerror = function(event) {
+        console.error('Erro ao salvar atleta:', event.target.errorCode);
+    };
+}
+
+// Registra um atleta e salva a chegada
+function registerAthlete() {
+    const display = document.getElementById('display');
+    const athleteID = display.value.trim();
+    if (athleteID === '') {
+        alert('Número inválido.');
+        return;
+    }
+
+    const transaction = db.transaction(['athletes']);
+    const objectStore = transaction.objectStore('athletes');
+    const request = objectStore.get(athleteID);
+
+    request.onsuccess = function(event) {
+        const athlete = event.target.result;
+        if (!athlete) {
+            alert('Atleta não encontrado.');
+            return;
+        }
+
+        const currentTime = new Date().toLocaleTimeString();
+        const tableBody = document.querySelector('#logTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `<td>${athleteID}</td><td>${athlete.name}</td><td>${athlete.category}</td><td>${currentTime}</td>`;
+        tableBody.appendChild(newRow);
+        clearDisplay();
+    };
+
+    request.onerror = function(event) {
+        console.error('Erro ao recuperar atleta:', event.target.errorCode);
+    };
+}
 
 function appendNumber(number) {
     const display = document.getElementById('display');
@@ -10,89 +77,4 @@ function clearDisplay() {
     document.getElementById('display').value = '';
 }
 
-function registerAthlete() {
-    const display = document.getElementById('display');
-    const athleteID = display.value.trim();
-
-    // Imprime o valor que está sendo tentado registrar no console
-    console.log(`Tentando registrar o ID: ${athleteID}`);
-
-    if (athleteID === '' || !athletes[athleteID]) {
-        alert('Atleta não encontrado ou número inválido.');
-        return;
-    }
-
-    const athlete = athletes[athleteID];
-    const currentTime = new Date().toLocaleTimeString();
-
-    // Adiciona o atleta à lista de chegadas
-    arrivals.push({
-        id: athleteID,
-        name: athlete.name,
-        category: athlete.category,
-        time: currentTime
-    });
-
-    // Persiste a lista de chegadas no localStorage
-    localStorage.setItem('arrivals', JSON.stringify(arrivals));
-
-    const tableBody = document.querySelector('#logTable tbody');
-    const newRow = document.createElement('tr');
-
-    const idCell = document.createElement('td');
-    idCell.textContent = athleteID;
-
-    const nameCell = document.createElement('td');
-    nameCell.textContent = athlete.name;
-
-    const categoryCell = document.createElement('td');
-    categoryCell.textContent = athlete.category;
-
-    const timeCell = document.createElement('td');
-    timeCell.textContent = currentTime;
-
-    newRow.appendChild(idCell);
-    newRow.appendChild(nameCell);
-    newRow.appendChild(categoryCell);
-    newRow.appendChild(timeCell);
-
-    tableBody.appendChild(newRow);
-
-    clearDisplay();
-}
-
-function loadCSV(event) {
-    const input = event.target;
-    const reader = new FileReader();
-
-    reader.onload = function() {
-        const lines = reader.result.split('\n');
-        processCSVLines(lines);
-    };
-
-    reader.readAsText(input.files[0]);
-}
-
-function loadCSVFromText() {
-    const csvText = document.getElementById('csvText').value;
-    const lines = csvText.split('\n');
-    processCSVLines(lines);
-}
-
-function processCSVLines(lines) {
-    athletes = {}; // Limpa os atletas anteriores
-    lines.forEach(line => {
-        const [id, name, category] = line.split(',').map(item => item.trim());
-        if (id && name && category) {
-            athletes[id] = {
-                name: name,
-                category: category
-            };
-        }
-    });
-
-    // Imprime a lista completa de atletas no console após o processamento do arquivo CSV
-    console.log('Lista completa de atletas carregados:', athletes);
-
-    alert('Atletas carregados com sucesso!');
-}
+initDB();

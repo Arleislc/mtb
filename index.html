@@ -10,6 +10,7 @@
     <nav>
         <ul>
             <li><a href="index.html">Registro</a></li>
+            <li><a href="carregar_atletas.html">Carregar Atletas</a></li>
             <li><a href="ordem_de_chegada.html">Resultados</a></li>
         </ul>
     </nav>
@@ -42,12 +43,6 @@
                 <!-- Registros serão adicionados aqui -->
             </tbody>
         </table>
-        <div class="csv-input">
-            <h3>Importar Atletas</h3>
-            <input type="file" id="csvFile" accept=".csv" onchange="loadCSV(event)">
-            <textarea id="csvText" placeholder="Cole o conteúdo CSV aqui..." rows="10" cols="50"></textarea>
-            <button onclick="loadCSVFromText()">Carregar CSV do Texto</button>
-        </div>
     </div>
     <script src="script.js"></script>
 </body>
